@@ -1,0 +1,152 @@
+
+board = [
+    [' ', ' ', ' '],
+    [' ', ' ', ' '],
+    [' ', ' ', ' ']
+]
+nodes_visited=0
+def print_board(board):
+   for i in range(len(board)):
+        for j in range(len(board[0])):
+           print(board[i][j], end=" ")
+        print()      
+def is_winner(board, player):
+    for i in board:
+        if i[0]==i[1]==i[2]==player:
+            return True
+    for j in range(len(board[0])):
+        if board[0][j]==board[1][j]==board[2][j]==player:
+           return True
+    i=0
+    j=0
+    if board[i][j]==board[i+1][j+1]==board[i+2][j+2]==player:
+        return True
+    i=0
+    j=2
+    if board[i][j]==board[i+1][j-1]==board[i+2][j-2]==player:
+        return True
+    return False
+def is_full(board):
+    for row in board:
+        if ' '  in row:
+            return False
+    return True
+def minimax(board, depth, is_maximizing):
+    
+    if is_winner(board, "X"):
+        return 10 - depth  
+    elif is_winner(board, "O"):
+        return -10 + depth  
+    elif is_full(board):
+        return 0
+    if depth==5:
+        return  heuristic()
+    if is_maximizing:  
+        best_val = float('-inf')
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == ' ': 
+                    board[i][j] = 'X'  
+                    value = minimax(board, depth + 1, False) 
+                    board[i][j] = ' '  
+                    best_val = max(best_val, value)  
+        return best_val  
+    else:  
+        best_val = float('+inf')
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == ' ':
+                    board[i][j] = 'O'  
+                    value = minimax(board, depth + 1, True) 
+                    board[i][j] = ' '  
+                    best_val = min(best_val, value)  
+        return best_val  
+def best_move():
+    best_score=float('-inf')
+    best_move=None
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if board[i][j]==' ':
+                board[i][j]='X'
+                score=minimax(board,0,False)
+                board[i][j]=' '
+                if score>best_score:
+                    best_score=score
+                    best_move=(i,j)
+    return best_move
+def heuristic():
+    score=0
+    temp_board=[row[:]for row in board]
+    for i in range(len(temp_board)):
+        for j in range(len(temp_board[0])):
+            if temp_board[i][j] == ' ':
+                temp_board[i][j] = 'O'
+                if is_winner(board,'O'):
+                    score=score-10
+                temp_board[i][j]==' '
+    if board[1][1]=='X': score+=10
+    elif board[1][1]=='O':score-=10
+    for i in board:
+        countx=0
+        counto=0
+        space=0
+        for j in range(len(i)):
+            if i[j]=='X':
+                countx+=1
+            elif i[j]=='O':
+                counto+=1
+            else:
+                space+=1
+        if countx==2 and space==1:
+            score+=10
+        elif counto==2 and space==1:
+            score-=10
+    countx=0
+    counto=0
+    space=0
+    for j in range(len(board[0])):
+        countx=0
+        counto=0
+        space=0
+        for i in range(len(board)):
+            if board[i][j]=='X':
+                countx+=1
+            elif board[i][j]=='O':
+                counto+=1
+            else:
+                space+=1
+        if countx==2 and space==1:
+            score+=10
+        elif counto==2 and space==1:
+            score-=10
+    return score
+def main():
+    print("Welcome to Tic-Tac-Toe!")
+    while True:
+        box=int(input("Enter the number of thse box:"))
+        row=int(box/3)
+        col=int(box%3)
+        if board[row][col] != ' ':
+            print("Invalid move! Try again.")
+            continue 
+        board[row][col] = 'O'  
+        print_board(board)
+        if is_winner(board, 'O'):
+            print("Congratulations! You (O) win! ")
+            break
+        if is_full(board):
+            print("It's a draw! ")
+            break
+        print("AI (X) is making a move...")
+        move = best_move()
+        if move:
+            board[move[0]][move[1]] = 'X'
+            print_board(board) 
+            if is_winner(board, 'X'):
+                print("AI (X) wins! ")
+                break
+        if is_full(board):
+            print("It's a draw!")
+            break
+  
+main()

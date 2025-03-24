@@ -141,8 +141,6 @@ class PuzzleSolver:
             print("Move no :" ,move)
             print(state)
             move+=1
-        
-
 def main():
     goal = [[1, 2, 3], [4, 5, 6], [7,8, " "]]
     ps = PuzzleSolver(Node([[4, 7, 8], [3, 6, 5], [1, 2, " "]], goal), goal)
@@ -151,6 +149,5 @@ def main():
         ps.print_solution(solution)  
     else:
         print("solution not exist") 
-
 main()
 
